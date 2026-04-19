@@ -27,12 +27,14 @@ sns.set_theme(style="whitegrid", font_scale=1.0)
 # ═══════════════════════════════════════════════════
 @st.cache_data
 def load_data():
-    df = pd.read_csv("merged.csv")
-    df["Severity"] = pd.Categorical(
-        df["Severity"],
-        categories=["Slight","Serious","Fatal"],
-        ordered=True)
+    accidents = pd.read_csv("Accidents.csv")
+    bikers    = pd.read_csv("Bikers.csv")
+    df = pd.merge(bikers, accidents, on="Accident_Index", how="inner")
+    df["Severity"] = pd.Categorical(df["Severity"],
+                        categories=["Slight","Serious","Fatal"], ordered=True)
     df["Date"] = pd.to_datetime(df["Date"])
+    df["Year"]       = df["Date"].dt.year
+    df["Month_Name"] = df["Date"].dt.strftime("%b")
     return df
 
 df = load_data()
